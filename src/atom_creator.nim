@@ -11,7 +11,7 @@ el = element; typeOfBond = self-explanatory ]#
 type
   Atom* = object
     p*, n*, e*: int
-    el*, typeOfBond*: string
+    el*, typeofBond*: string
 
 proc createUsrAtom(usrAtom: var Atom) =
   while true:
@@ -27,7 +27,7 @@ proc createUsrAtom(usrAtom: var Atom) =
     else:
       echo("Invalid input. Please enter a valid integer without a decimal.")
 
-proc myAtomsElement(): string =
+proc myAtomsElement(usrAtom: Atom): string =
   var periodicTable: array[118, string] = [
     "Hydrogen", "Helium", "Lithium", "Beryllium", "Boron",
     "Carbon", "Nitrogen", "Oxygen", "Fluorine", "Neon",
@@ -54,17 +54,23 @@ proc myAtomsElement(): string =
     "Roentgenium", "Copernicium", "Nihonium", "Flerovium", "Moscovium",
     "Livermorium", "Tennessine", "Oganesson"
   ]
-  echo("This is my Atom's Element!")
-  return periodicTable[40]
-  
+  if usrAtom.p > 0 and usrAtom.p <= 118:
+    return periodicTable[usrAtom.p - 1]
+  else:
+    return "Unknown Element"
+
 proc findTypeOfBond(usrAtom: Atom): string =
-  let bondType: array[4, string] = [
-    "Ionic Bond",
-    "Covalent Bond",
-    "Polar Covalent Bond",
-    "Metalic Bond"
-  ]
-  return bondType[0]
+  const ionicElectronegativityThreshold: float = 1.7
+  const polarCovalentElectronegativityThreshold: float = 0.4
+
+  let electronegativityDifference: float = abs(float(usrAtom.p) - float(usrAtom.e))
+
+  if electronegativityDifference > ionicElectronegativityThreshold:
+    return "Ionic Bond"
+  elif electronegativityDifference > polarCovalentElectronegativityThreshold:
+    return "Polar Covalent Bond"
+  else:
+    return "Covalent Bond"
 
 proc toggleMiniGame(): bool =
   while true:
@@ -82,14 +88,20 @@ proc toggleMiniGame(): bool =
 
 proc returnAtomData(usrAtom: Atom) =
   echo("Here is the final result of your Atom's data!")
+
+  let usrEl: string = myAtomsElement(usrAtom)
+  let usrBond: string = findTypeOfBond(usrAtom)
+
+  echo("Your Atom's element is: " & $usrEl)
+  echo("Your Atom's type of bond is " & $usrBond)
     
 # Program's main source starts here
 echo("Starting to create your Atom...")
 var usrAtom: Atom
 createUsrAtom(usrAtom)
-echo("Your atom now has " & $usrAtom.p & " protons.")
+echo("Your atom now contains " & $usrAtom.p & " protons.")
 let val: bool = toggleMiniGame()
 if val == true:
   minigame.runMain()
 else:
- echo("Ok") 
+  returnAtomData(usrAtom)
