@@ -1,18 +1,17 @@
-import strutils
-import minigame
-
-when isMainModule:
-  echo("Welcome to Atom-Creator where you can create your very own bonds & atoms!")
-  echo("Then we will match your created Atom to an element from the periodic table!\n")
+import strutils, minigame
 
 #[ Variable Explanation:
 p = protons; n = neutrons; e = electrons,
 el = element; typeOfBond = self-explanatory ]#
 type
   Atom* = object
-    p*, n*, e*: int
-    el*, typeofBond*: string
+    p, n, e: int
+    el, typeofBond: string
 
+when isMainModule:
+  echo("Welcome to Atom-Creator where you can create your very own bonds & atoms!")
+  echo("Then we will match your created Atom to an element from the periodic table!\n")
+    
 proc createUsrAtom(usrAtom: var Atom) =
   while true:
     echo("Please enter the number of protons for your atom (an integer under 119):")
@@ -86,22 +85,22 @@ proc toggleMiniGame(): bool =
       echo("Invalid character please input either \'y\' or \'n\'")
       break
 
-proc returnAtomData(usrAtom: Atom) =
-  echo("Here is the final result of your Atom's data!")
-
-  let usrEl: string = myAtomsElement(usrAtom)
-  let usrBond: string = findTypeOfBond(usrAtom)
-
-  echo("Your Atom's element is: " & $usrEl)
-  echo("Your Atom's type of bond is " & $usrBond)
+proc returnAtomData(usrAtom: var Atom) =
+  echo("\nHere is the final result of your Atom's data!\n") 
+  echo("Your Atom's element is: \'" & $usrAtom.el & "\'")
+  echo("Your Atom's type of bond is: \'" & $usrAtom.typeofBond & "\'")
     
 # Program's main source starts here
 echo("Starting to create your Atom...")
 var usrAtom: Atom
 createUsrAtom(usrAtom)
 echo("Your atom now contains " & $usrAtom.p & " protons.")
+
+usrAtom.el = myAtomsElement(usrAtom)
+usrAtom.typeofBond = findTypeOfBond(usrAtom)
+
 let val: bool = toggleMiniGame()
-if val == true:
+if val == true: 
   minigame.runMain()
 else:
   returnAtomData(usrAtom)
