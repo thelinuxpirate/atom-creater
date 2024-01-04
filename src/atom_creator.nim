@@ -1,4 +1,4 @@
-import strutils, minigame
+import strutils
 
 #[ Variable Explanation:
 p = protons; n = neutrons; e = electrons,
@@ -77,10 +77,8 @@ proc toggleMiniGame(): bool =
     let status: string = readLine(stdin)
     if status.len == 0 or status == "y":
       return true
-      break
     elif status == "n":
       return false
-      break
     else:
       echo("Invalid character please input either \'y\' or \'n\'")
       break
@@ -89,7 +87,48 @@ proc returnAtomData(usrAtom: var Atom) =
   echo("\nHere is the final result of your Atom's data!\n") 
   echo("Your Atom's element is: \'" & $usrAtom.el & "\'")
   echo("Your Atom's type of bond is: \'" & $usrAtom.typeofBond & "\'")
-    
+
+
+#[ Atom Creator Mini-Game:
+This application provides a togglable minigame where you can create your atom \
+then try to match it to an existing element from the periodic table.
+]#
+proc runMiniGame(usrAtom: var Atom, x: bool) =
+      if x == true:
+        echo("In this minigame you will provide us the name of what\nelement you believe your Atom is. You get 3 tries...\n\nGOOD LUCK!\n")
+      echo("Please enter your guess!")
+      var limit: int = 3
+
+      while limit > 0:
+        let guess: string = readLine(stdin)
+        if guess != myAtomsElement(usrAtom):
+          echo("Incorrect Element, try again")
+          limit -= 1
+        elif guess == myAtomsElement(usrAtom):
+          echo("Correct! Your Atom's element is indeed \'" & $myAtomsElement(usrAtom) & "\'!")
+          echo("Good work! Here is the full end results:")
+          returnAtomData(usrAtom)
+          break
+
+        if limit == 0:
+          echo("\nSorry, but you are all out of tries!\nThe correct element is \'" & $myAtomsElement(usrAtom) & "\'.")
+          echo("\nHere are your end results...")
+          returnAtomData(usrAtom)
+          
+proc runMain(usrAtom: var Atom) =
+  while true:
+    echo("\nYou have chosen to run the minigame!\nWould you like to read the instructions? [Y/n]")
+    let status: string = readLine(stdin)
+    if status.len == 0 or status == "y":
+      runMiniGame(usrAtom, true)
+      break
+    elif status == "n":
+      runMiniGame(usrAtom, false)
+      break
+    else:
+      echo("Invalid character please input either \'y\' or \'n\'")
+      break
+ 
 # Program's main source starts here
 echo("Starting to create your Atom...")
 var usrAtom: Atom
@@ -101,6 +140,6 @@ usrAtom.typeofBond = findTypeOfBond(usrAtom)
 
 let val: bool = toggleMiniGame()
 if val == true: 
-  minigame.runMain()
+  runMain(usrAtom)
 else:
   returnAtomData(usrAtom)
